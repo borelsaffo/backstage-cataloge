@@ -1,0 +1,35 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: create-s3-bucket
+  title: Créer un Bucket S3 AWS
+  description: Permet aux développeurs de créer un bucket S3 via Crossplane
+spec:
+  owner: dev-team@example.com
+  parameters:
+    - title: Nom du bucket
+      type: string
+      required: true
+      name: bucketName
+    - title: Région AWS
+      type: string
+      required: true
+      name: region
+      enum:
+        - us-west-1
+        - us-east-1
+        - eu-west-1
+  steps:
+    - id: create-s3
+      name: Créer un bucket S3
+      action: kubernetes:apply
+      input:
+        manifests:
+          - apiVersion: platform.example.org/v1alpha1
+            kind: Bucket
+            metadata:
+              name: '{{ parameters.bucketName }}'
+            spec:
+              parameters:
+                name: '{{ parameters.bucketName }}'
+                region: '{{ parameters.region }}'
